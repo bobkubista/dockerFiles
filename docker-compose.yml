@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    environment:
+      - DEFAULT_HOST=bobkubista.com
+
+  web:
+    build: .
+    environment:
+      - VIRTUAL_HOST=bobkubista.com
