@@ -11,6 +11,6 @@ services:
       - DEFAULT_HOST=bobkubista.com
 
   web:
-    build: ./static_http
+    build: .
     environment:
       - VIRTUAL_HOST=bobkubista.com
