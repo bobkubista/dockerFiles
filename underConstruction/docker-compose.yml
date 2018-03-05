@@ -3,6 +3,8 @@ version: '2'
 services:
   nginx-proxy:
     image: jwilder/nginx-proxy
+    mem_limit: 20m
+    restart: always
     ports:
       - "80:80"
     volumes:
@@ -12,5 +14,7 @@ services:
 
   web:
     build: ./static_http
+    mem_limit: 10m
+    restart: always
     environment:
       - VIRTUAL_HOST=bobkubista.com
