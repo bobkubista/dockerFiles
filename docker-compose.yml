@@ -1,0 +1,67 @@
+version: '3'
+
+services:
+#under construction
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    #mem_limit: 20m
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 20M
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    environment:
+      - DEFAULT_HOST=bobkubista.com
+
+  web:
+    build: ./underConstruction/static_http
+    #mem_limit: 10m
+    deploy:
+      #replicas: 2
+      resources:
+        limits:
+          cpus: '0.10'
+          memory: 10M
+    restart: always
+    environment:
+      - VIRTUAL_HOST=bobkubista.com
+
+#elk stack
+  es:
+    build:
+        context: ./elk/docker-elk
+        dockerfile: Dockerfile-es
+    networks:
+      elk:
+        aliases:
+          - elasticsearch
+    volumes:
+      - ./es-data:/usr/share/elasticsearch/data
+    command: -Etransport.host=127.0.0.1
+
+  kibana:
+    image: kibana:5.1.1
+    networks:
+      - elk
+    ports:
+      - 5601:5601
+
+  logstash:
+    build:
+        context: ./elk/docker-elk
+        dockerfile: Dockerfile
+    networks:
+      - elk
+    ports:
+      - 5000:5000
+      - 5000:5000/udp
+      - 12201:12201/udp
+
+networks:
+  elk:
+    driver: bridge
